@@ -1,0 +1,112 @@
+[
+  {
+    "i_d": 1,
+    "name": "Overall_Supplier_Ranking",
+    "kpi": 0,
+    "pid": 0,
+    "weight": 1.0,
+    "hb": 1,
+    "kpi_type": "attribute",
+    "criterion_id": null
+  },
+  {
+    "i_d": 2,
+    "name": "Material_Quality",
+    "kpi": 0,
+    "pid": 1,
+    "weight": 0.30,
+    "hb": 1,
+    "kpi_type": "attribute",
+    "criterion_id": null
+  },
+  {
+    "i_d": 3,
+    "name": "On_time_Delivery",
+    "kpi": 0,
+    "pid": 1,
+    "weight": 0.25,
+    "hb": 1,
+    "kpi_type": "attribute",
+    "criterion_id": null
+  },
+  {
+    "i_d": 4,
+    "name": "Material_Cost",
+    "kpi": 1,
+    "pid": 1,
+    "weight": 0.20,
+    "hb": 0,
+    "kpi_type": "numeric",
+    "criterion_id": "C3"
+  },
+  {
+    "i_d": 5,
+    "name": "Environmental_Assessment",
+    "kpi": 0,
+    "pid": 1,
+    "weight": 0.25,
+    "hb": 1,
+    "kpi_type": "attribute",
+    "criterion_id": null
+  },
+  {
+    "i_d": 6,
+    "name": "Printability_Rheological_Stability",
+    "kpi": 1,
+    "pid": 2,
+    "weight": 0.55,
+    "hb": 1,
+    "kpi_type": "numeric",
+    "criterion_id": "C1"
+  },
+  {
+    "i_d": 7,
+    "name": "Early_Age_Compressive_Strength",
+    "kpi": 1,
+    "pid": 2,
+    "weight": 0.45,
+    "hb": 1,
+    "kpi_type": "numeric",
+    "criterion_id": "C2"
+  },
+  {
+    "i_d": 8,
+    "name": "On_Time_Delivery_Reliability",
+    "kpi": 1,
+    "pid": 3,
+    "weight": 0.60,
+    "hb": 1,
+    "kpi_type": "numeric",
+    "criterion_id": "C4"
+  },
+  {
+    "i_d": 9,
+    "name": "Supply_Lead_Time",
+    "kpi": 1,
+    "pid": 3,
+    "weight": 0.40,
+    "hb": 0,
+    "kpi_type": "numeric",
+    "criterion_id": "C5"
+  },
+  {
+    "i_d": 10,
+    "name": "Certification_Building_Code_Compliance",
+    "kpi": 1,
+    "pid": 5,
+    "weight": 0.50,
+    "hb": 1,
+    "kpi_type": "numeric",
+    "criterion_id": "C6"
+  },
+  {
+    "i_d": 11,
+    "name": "Environmental_Sustainability_Performance",
+    "kpi": 1,
+    "pid": 5,
+    "weight": 0.50,
+    "hb": 1,
+    "kpi_type": "numeric",
+    "criterion_id": "C7"
+  }
+]
