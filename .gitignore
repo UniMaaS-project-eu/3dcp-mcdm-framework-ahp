@@ -5,6 +5,9 @@
 *.py[cod]
 *$py.class
 ahp_venv/
+.ahp_venv
+.venv/
+venv/
 
 # Logs
 *.log
