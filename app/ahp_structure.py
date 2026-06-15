@@ -25,7 +25,7 @@ class AHPElement:
         self.criterion_id = criterion_id
 
         # Raw KPI values. For non-KPI attributes, this usually remains None.
-        self.value = None
+        self.values = None
 
         # Relative ranking vector calculated by AHP
         self.rrv = []
@@ -59,6 +59,6 @@ class AHPElement:
             "high_better": self.high_better,
             "kpi_type": self.kpi_type,
             "criterion_id": self.criterion_id,
-            "value": self.value,
+            "values": self.values,
             "rrv": self.rrv
         }
