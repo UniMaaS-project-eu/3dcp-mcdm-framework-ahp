@@ -4,7 +4,7 @@ from flask import request
 from flask_restx import Resource
 from app import mcdm_api
 from app.ahp_structure import AHPElement
-from app.ahp.methods import qahp_rrv_kpi_calc
+from app.ahp.methods import qahp_rrv_kpi_calc, attr_rrv
 
 BASE_DIR = os.path.dirname(__file__)
 HIERARCHY_PATH = os.path.join(BASE_DIR, "static", "hierarchy.json")
@@ -37,7 +37,7 @@ def load_ahp_structure():
      return hierarchy, attributes, kpis
 
 
-def prepare_criterion_vectors(concrete_alternatives, kpis):
+def prepare_criterion_vectors(alternatives, kpis):
     """
     Creates one vector of values per criterion.
     Example:
@@ -56,7 +56,7 @@ def prepare_criterion_vectors(concrete_alternatives, kpis):
 
         values = []
 
-        for alternative in concrete_alternatives:
+        for alternative in alternatives:
             if criterion_id not in alternative:
                 raise ValueError(
                     f"Alternative with materialID '{alternative.get('materialID')}' "
@@ -78,17 +78,17 @@ def read_alternatives_input(body, kpis):
 
     preferences = body["preferences"]
     preferences = [float(value) for value in preferences]
-    concrete_alternatives = body["concrete"]
+    alternatives = body["concrete"] #TODO Check!! for request element --> change it from concrete?
 
     if len(preferences) != 4: # Depending on the MCDM scenario!!!!!
         raise ValueError("'preferences' must contain exactly 4 values.")
    
     criterion_vectors = prepare_criterion_vectors(
-        concrete_alternatives=concrete_alternatives,
+        alternatives=alternatives,
         kpis=kpis
     )
 
-    return preferences, concrete_alternatives, criterion_vectors
+    return preferences, alternatives, criterion_vectors
 
 # Here start writting the routes for the API -----------
 @mcdm_api.route("/ahp/kpis") # read the KPIs for the AHP
@@ -147,7 +147,7 @@ class Alternatives(Resource):
         try:
             hierachy, attributes, kpis = load_ahp_structure()
             body = request.get_json()
-            preferences, concrete_alternatives, criterion_vectors = read_alternatives_input(
+            preferences, alternatives, criterion_vectors = read_alternatives_input(
                 body=body,
                 kpis=kpis
             )
@@ -155,7 +155,7 @@ class Alternatives(Resource):
             # TODO: Here apply preferences to root children
 
             PREFERENCES = preferences
-            ALTERNATIVES = concrete_alternatives
+            ALTERNATIVES = alternatives
             CRITERION_VECTORS = criterion_vectors
 
             # TODO: When the calculations are ready
@@ -166,14 +166,21 @@ class Alternatives(Resource):
                 kpi.rrv = qahp_rrv_kpi_calc(kpi.values, kpi.high_better)
                 # print(kpi.rrv)
 
+            # Calculate rrv for the Attributes
+            attributes = attr_rrv(attributes, kpis)
 
+            # Find best and prepare output
+            overall_rank = next(attr for attr in attributes if attr.pid == 0)
+            best_index = overall_rank.rrv.index(max(overall_rank.rrv))
 
-            return {
-                "message": "Alternatives loaded successfully.",
-                "preferences": PREFERENCES,
-                "alternatives_count": len(ALTERNATIVES),
-                "criterion_vectors": CRITERION_VECTORS
-            }, 200
+            best_alternative = alternatives[best_index]
+            print(best_alternative)
+
+            return {"overall_rank": overall_rank.to_dict(),
+                    "best_index": best_index,
+                    "best_alternative": best_alternative,
+                    "attributes": [attr.to_dict() for attr in attributes],
+                    "kpis":[kpi.to_dict() for kpi in kpis]}, 200
 
         except KeyError as exc:
             return {

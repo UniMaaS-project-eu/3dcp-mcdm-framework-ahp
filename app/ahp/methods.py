@@ -1,4 +1,5 @@
 # Methods for AHP calculations
+import numpy as np
 
 def matrix_multiply(matrix1, matrix2):
     """
@@ -50,7 +51,6 @@ def rcm_def(alt_values:list, kpi_hb):
     return rcm
 
 # Calculate numeric Relative Ranking Vectors for KPIs --> quick AHP
-# quick AHP calculation of RRV
 def qahp_rrv_kpi_calc(alt_values:list, kpi_hb):
     #
     q_rrv = []
@@ -64,3 +64,35 @@ def qahp_rrv_kpi_calc(alt_values:list, kpi_hb):
         for v in alt_values:
             q_rrv.append((1/v)*b_ratio)
     return q_rrv
+
+# Calculate numeric Relative Ranking Vectors for Attributes
+def attr_rrv(attributes, kpis):
+    """
+    """
+    # Sort descending so lower-level attributes are calculated first.
+    attributes = sorted(attributes, key=lambda x: x.id, reverse=True)
+    
+    for attr in attributes:
+
+        # find siblings
+        siblings = []
+        for k in kpis:
+            if attr.id == k.pid:
+                siblings.append(k)
+        for k in attributes:
+            if attr.id == k.pid:
+                siblings.append(k)
+
+        # Define the rcm for attribute
+        rcm = []
+        w_vector = []
+        for s in siblings:
+            w_vector.append(s.weight)
+            rcm.append(s.rrv)
+        
+        # Prepare vectors and calculate rrv
+        rcm = np.array(rcm).transpose()
+        w_vector = np.array(w_vector)
+        attr.rrv = rcm.dot(w_vector).tolist()
+
+    return attributes
