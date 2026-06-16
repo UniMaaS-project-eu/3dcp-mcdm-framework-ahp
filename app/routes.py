@@ -4,6 +4,7 @@ from flask import request
 from flask_restx import Resource
 from app import mcdm_api
 from app.ahp_structure import AHPElement
+from app.ahp.methods import qahp_rrv_kpi_calc
 
 BASE_DIR = os.path.dirname(__file__)
 HIERARCHY_PATH = os.path.join(BASE_DIR, "static", "hierarchy.json")
@@ -22,7 +23,6 @@ def read_hierarchy_json():
 
     with open(HIERARCHY_PATH, "r", encoding="utf-8") as file:
         return json.load(file)
-
 
 def load_ahp_structure():
      """
@@ -160,6 +160,13 @@ class Alternatives(Resource):
 
             # TODO: When the calculations are ready
             # return ahp_result, overall_rrv, _, _
+
+            # Calculate rrv for the KPIs 
+            for kpi in kpis:
+                kpi.rrv = qahp_rrv_kpi_calc(kpi.values, kpi.high_better)
+                # print(kpi.rrv)
+
+
 
             return {
                 "message": "Alternatives loaded successfully.",

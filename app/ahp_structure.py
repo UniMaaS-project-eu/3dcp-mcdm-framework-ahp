@@ -17,7 +17,7 @@ class AHPElement:
         self.weight = float(weight)
 
         # High better flag, mainly useful for numeric KPIs
-        self.high_better = bool(int(hb))
+        self.high_better = int(hb)
 
         # Examples: attribute, numeric, set, ling
         self.kpi_type = kpi_type
