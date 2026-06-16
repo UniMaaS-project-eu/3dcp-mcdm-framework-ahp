@@ -1,0 +1,12 @@
+services:
+  ahp:
+    build: .
+    container_name: ahp-api
+    ports:
+      - "8888:8080"
+    networks:
+      - shared
+networks:
+  shared:
+    external: true
+    name: anv-net
