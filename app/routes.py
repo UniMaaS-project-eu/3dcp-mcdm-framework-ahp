@@ -78,7 +78,7 @@ def read_alternatives_input(body, kpis):
 
     preferences = body["preferences"]
     preferences = [float(value) for value in preferences]
-    alternatives = body["concrete"] #TODO Check!! for request element --> change it from concrete?
+    alternatives = body["alternatives"] 
 
     if len(preferences) != 4: # Depending on the MCDM scenario!!!!!
         raise ValueError("'preferences' must contain exactly 4 values.")
@@ -89,6 +89,32 @@ def read_alternatives_input(body, kpis):
     )
 
     return preferences, alternatives, criterion_vectors
+
+def anv_preferences(preferences, attributes, kpis):
+    """
+    Update weight values for the respective criteria for ANV pilot
+    """
+    top_attr = next(attr for attr in attributes if attr.pid == 0)
+    children = []
+
+    # Find child attributes of the overall/top-level atribute
+    for attr in attributes:
+        if attr.pid == top_attr.id:
+            children.append(attr)
+
+    # Find child KPIs of the overall/top-level atribute
+    for kpi in kpis:
+        if kpi.pid == top_attr.id:
+            children.append(kpi)
+
+    # children stores the same object references
+    children = sorted(children, key=lambda x: x.id)
+
+    for index, child in enumerate(children):
+        child.weight = float(preferences[index])
+
+    return attributes, kpis
+
 
 # Here start writting the routes for the API -----------
 @mcdm_api.route("/ahp/kpis") # read the KPIs for the AHP
@@ -152,7 +178,12 @@ class Alternatives(Resource):
                 kpis=kpis
             )
 
-            # TODO: Here apply preferences to root children
+            # Here apply preferences to root children
+            attributes, kpis = anv_preferences(
+            preferences=preferences,
+            attributes=attributes,
+            kpis=kpis
+            )
 
             PREFERENCES = preferences
             ALTERNATIVES = alternatives
